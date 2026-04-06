@@ -30,6 +30,13 @@ class Settings(BaseSettings):
   smtp_use_ssl: bool = False
   smtp_timeout_seconds: int = 20
 
+  # Optional HTTPS transactional email provider for environments that block SMTP.
+  brevo_api_key: str | None = None
+  brevo_sender_email: str | None = None
+  brevo_sender_name: str = "ResumeForge"
+  brevo_reply_to: str | None = None
+  brevo_base_url: str = "https://api.brevo.com"
+
   ai_provider_mode: Literal["openai", "anthropic", "ollama", "fallback", "auto"] = Field(
     default="auto",
     validation_alias=AliasChoices("AI_PROVIDER_MODE", "AI_PROVIDER")

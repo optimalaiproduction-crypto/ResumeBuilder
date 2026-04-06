@@ -1,80 +1,65 @@
-# ResumeForge Fresh Deployment (Free + Working Password Reset Email)
+# ResumeForge No-Card Deployment (Fresh Start)
 
-This guide is for a clean restart deployment from zero.
+This guide is for a fresh deployment with no paid plan and no SMTP dependency on the hosting provider.
 
-- Frontend (free): Vercel Hobby
-- Backend (free): Koyeb Free Instance
-- Database: your existing Hostinger MySQL
-- Password reset email: Hostinger SMTP (`smtp.hostinger.com:465`, SSL)
+- Frontend: Vercel Hobby (free)
+- Backend: Render Free Web Service
+- Database: Hostinger MySQL (existing)
+- Password reset email: Brevo Transactional API (free, no card required by Brevo free plan)
 
-## 0) Start Fresh (remove previous deployment roots)
+## 0) Fresh reset in dashboards
 
-Do this first so old root-directory settings do not interfere:
+Delete old deployments before creating new ones:
 
-1. Vercel dashboard:
-   - Delete old ResumeForge projects (especially any that used root `frontend`, `backend`, or repo root by mistake).
-2. Koyeb/Render:
-   - Delete old ResumeForge services/apps so only one API deployment exists.
-3. In every provider, remove old environment variables for this app.
+1. Vercel: delete previous ResumeForge projects.
+2. Render: delete previous ResumeForge services.
+3. Remove old env vars from both providers.
 
-## 1) Connect this folder to GitHub
-
-If this folder has no `.git`:
-
-```bash
-git init
-git branch -M main
-git remote add origin <your-github-repo-url>
-git add .
-git commit -m "Fresh deployment setup"
-git push -u origin main
-```
-
-If your repo is already connected:
+## 1) Push code to GitHub
 
 ```bash
 git add .
-git commit -m "Fresh deployment update"
+git commit -m "No-card deployment setup"
 git push origin main
 ```
 
-## 2) Prepare production values
+## 2) Create Brevo free account for reset emails
 
-You will need these before deploying:
+1. Sign up at Brevo.
+2. Verify sender email/domain (use your domain email, e.g. `notify@nextlinecreative.in`).
+3. Create API key (SMTP/API section).
+4. Keep this safe:
+   - `BREVO_API_KEY`
 
-1. Backend URL placeholder (you will get it from Koyeb later), for example:
-   - `https://<your-koyeb-service>.koyeb.app/api/v1`
-2. Frontend URL placeholder (you will get it from Vercel later), for example:
-   - `https://<your-project>.vercel.app`
-3. A strong JWT secret (generate once):
+## 3) Deploy backend on Render
 
-```bash
-python -c "import secrets; print(secrets.token_urlsafe(48))"
-```
-
-4. Firebase web app keys (all `NEXT_PUBLIC_FIREBASE_*` values).
-
-## 3) Deploy backend on Koyeb (free)
-
-1. Sign in to Koyeb and create a new **Web Service** from GitHub.
-2. Select this repository and branch `main`.
-3. Set **Work directory** to:
+1. Create new Render **Web Service** from GitHub.
+2. Repo: `optimalaiproduction-crypto/ResumeBuilder`, branch `main`.
+3. Runtime:
+   - `Docker`
+4. Root directory:
    - `apps/api`
-4. Builder/runtime:
-   - Use Dockerfile from work directory (`./Dockerfile`).
-5. Instance type:
-   - `free` (one free service per organization).
-6. Set health check path:
+5. Dockerfile:
+   - `./Dockerfile`
+6. Health check:
    - `/api/v1/health`
-7. Add environment variables:
+7. Add env vars:
 
 ```env
 DEBUG=false
 API_PREFIX=/api/v1
 DATABASE_URL=mysql+pymysql://<db_user>:<db_password>@<db_host>:3306/<db_name>?charset=utf8mb4
-JWT_SECRET_KEY=<paste-generated-secret>
-FRONTEND_URL=https://<your-project>.vercel.app
+JWT_SECRET_KEY=<strong-random-secret>
+FRONTEND_URL=https://<your-vercel-domain>
 
+# Brevo API email (preferred for free hosting)
+BREVO_API_KEY=<your-brevo-api-key>
+BREVO_SENDER_EMAIL=notify@nextlinecreative.in
+BREVO_SENDER_NAME=Nextline Creative
+BREVO_REPLY_TO=notify@nextlinecreative.in
+BREVO_BASE_URL=https://api.brevo.com
+
+# Optional SMTP fallback
 SMTP_HOST=smtp.hostinger.com
 SMTP_PORT=465
 SMTP_USERNAME=notify@nextlinecreative.in
@@ -88,26 +73,26 @@ SMTP_TIMEOUT_SECONDS=20
 ```
 
 8. Deploy.
-9. Confirm health is live:
-   - `https://<your-koyeb-service>.koyeb.app/api/v1/health`
+9. Validate:
+   - `https://<your-render-service>.onrender.com/api/v1/health`
 
 ## 4) Hostinger DB remote access
 
-In Hostinger hPanel:
+In hPanel:
 
-1. Enable remote access for your MySQL user.
-2. If IP allow-list is required, add current outbound IP ranges for your Koyeb region.
-3. Save changes and test backend health again.
+1. Enable remote DB access for the DB user in `DATABASE_URL`.
+2. If allow-list is enabled, add Render outbound access as needed.
+3. Re-test backend health URL.
 
-## 5) Deploy frontend on Vercel (free)
+## 5) Deploy frontend on Vercel
 
-1. Import the same GitHub repository in Vercel.
-2. Set **Root Directory**:
+1. Import same GitHub repo.
+2. Root Directory:
    - `apps/web`
-3. Add environment variables:
+3. Env vars:
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=https://<your-koyeb-service>.koyeb.app/api/v1
+NEXT_PUBLIC_API_BASE_URL=https://<your-render-service>.onrender.com/api/v1
 NEXT_PUBLIC_FIREBASE_API_KEY=<from-firebase>
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=<from-firebase>
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=<from-firebase>
@@ -117,41 +102,29 @@ NEXT_PUBLIC_FIREBASE_APP_ID=<from-firebase>
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=<from-firebase>
 ```
 
-4. Deploy and copy your final Vercel URL.
+4. Deploy and copy the Vercel URL.
 
-## 6) Final CORS sync (required)
+## 6) Final CORS sync
 
-Update backend `FRONTEND_URL` to include all production origins, comma-separated:
+Update backend `FRONTEND_URL`:
 
 ```text
-https://<your-project>.vercel.app,https://<your-custom-domain>
+https://<your-vercel-domain>,https://<your-custom-domain>
 ```
 
-Redeploy backend after this change.
+Redeploy backend.
 
-## 7) Verify password reset email works
+## 7) Test full flow
 
-1. Open frontend and register/login.
-2. Use **Forgot Password** with a real account email.
-3. Check inbox/spam for reset email from `notify@nextlinecreative.in`.
-4. Open reset link, set new password, then login with new password.
-
-If email is not received:
-
-1. Check backend logs for SMTP errors.
-2. Re-check SMTP settings:
-   - host `smtp.hostinger.com`
-   - port `465`
-   - SSL `true`
-   - TLS `false`
-3. Verify mailbox password is correct in Koyeb env var.
-4. If your environment rejects port `465`, switch to Hostinger TLS settings:
-   - `SMTP_PORT=587`
-   - `SMTP_USE_TLS=true`
-   - `SMTP_USE_SSL=false`
+1. Register/Login
+2. Forgot password
+3. Confirm reset email received
+4. Reset password
+5. Login with new password
 
 ## 8) Important notes
 
-1. Never commit real secrets to git.
-2. IMAP settings are not needed by this app (only SMTP is used for outgoing reset emails).
-3. Free instances can sleep when idle, so first request after idle can be slower.
+1. Keep all secrets in dashboard env vars only.
+2. Rotate credentials immediately if they were shared.
+3. IMAP settings are not required by this app; only outbound email delivery is used.
+4. If a provider asks for billing verification on your account, stop and switch to another free provider/account path.
