@@ -18,6 +18,10 @@ class Settings(BaseSettings):
   jwt_algorithm: str = "HS256"
   jwt_expire_minutes: int = 60 * 24 * 7
   password_reset_token_expire_minutes: int = 30
+  firebase_project_id: str | None = Field(
+    default=None,
+    validation_alias=AliasChoices("FIREBASE_PROJECT_ID", "NEXT_PUBLIC_FIREBASE_PROJECT_ID")
+  )
 
   smtp_host: str | None = None
   smtp_port: int = 587

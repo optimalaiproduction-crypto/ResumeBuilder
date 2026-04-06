@@ -3,11 +3,10 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Eye, EyeOff } from "lucide-react";
 
 import { useAuth } from "@/components/providers/auth-provider";
-import { api } from "@/lib/api";
 import { firebaseAuth } from "@/lib/firebase";
 
 function firebaseErrorCode(err: unknown): string {
@@ -23,18 +22,39 @@ function firebaseErrorCode(err: unknown): string {
   return "";
 }
 
-function canFallbackToBackend(code: string): boolean {
-  return (
-    code === "auth/operation-not-allowed" ||
-    code === "auth/configuration-not-found" ||
-    code === "auth/invalid-api-key" ||
-    code === "auth/app-not-authorized" ||
-    code === "auth/network-request-failed" ||
+function authErrorMessage(code: string, mode: "login" | "register") {
+  if (code === "auth/email-already-in-use") {
+    return "This email is already registered. Please sign in instead.";
+  }
+  if (code === "auth/invalid-email") {
+    return "Please enter a valid email address.";
+  }
+  if (code === "auth/weak-password") {
+    return "Password is too weak. Use at least 8 characters.";
+  }
+  if (
     code === "auth/invalid-credential" ||
     code === "auth/invalid-login-credentials" ||
     code === "auth/wrong-password" ||
     code === "auth/user-not-found"
-  );
+  ) {
+    return "Invalid email or password.";
+  }
+  if (code === "auth/too-many-requests") {
+    return "Too many attempts. Please try again in a few minutes.";
+  }
+  if (
+    code === "auth/operation-not-allowed" ||
+    code === "auth/configuration-not-found" ||
+    code === "auth/invalid-api-key" ||
+    code === "auth/app-not-authorized"
+  ) {
+    return "Authentication is not configured correctly. Please contact support.";
+  }
+  if (code === "auth/network-request-failed") {
+    return "Unable to connect right now. Please try again.";
+  }
+  return mode === "login" ? "Sign in failed." : "Registration failed.";
 }
 
 export function AuthPanel() {
@@ -64,47 +84,30 @@ export function AuthPanel() {
     try {
       const normalizedEmail = email.trim();
       const normalizedFullName = fullName.trim().replace(/\s+/g, " ");
-      let response;
       if (mode === "register" && normalizedFullName.length < 2) {
         throw new Error("Please enter your full name.");
       }
 
+      let credential;
       if (mode === "register") {
-        try {
-          await createUserWithEmailAndPassword(firebaseAuth, normalizedEmail, password);
-        } catch (firebaseErr) {
-          const code = firebaseErrorCode(firebaseErr);
-          if (code !== "auth/email-already-in-use" && !canFallbackToBackend(code)) {
-            throw firebaseErr;
-          }
-        }
-
-        try {
-          response = await api.register(normalizedFullName, normalizedEmail, password);
-        } catch (backendErr) {
-          const message = backendErr instanceof Error ? backendErr.message : "";
-          if (!message.includes("409")) {
-            throw backendErr;
-          }
-          response = await api.login(normalizedEmail, password);
+        credential = await createUserWithEmailAndPassword(firebaseAuth, normalizedEmail, password);
+        if (normalizedFullName) {
+          await updateProfile(credential.user, { displayName: normalizedFullName });
         }
       } else {
-        try {
-          await signInWithEmailAndPassword(firebaseAuth, normalizedEmail, password);
-        } catch (firebaseErr) {
-          const code = firebaseErrorCode(firebaseErr);
-          if (!canFallbackToBackend(code)) {
-            throw firebaseErr;
-          }
-        }
-        response = await api.login(normalizedEmail, password);
+        credential = await signInWithEmailAndPassword(firebaseAuth, normalizedEmail, password);
       }
 
+      const firebaseUser = credential.user;
+      const idToken = await firebaseUser.getIdToken();
+      const resolvedFullName = firebaseUser.displayName ?? (mode === "register" ? normalizedFullName : null);
+      const resolvedEmail = firebaseUser.email ?? normalizedEmail;
+
       auth.setSession(
-        response.access_token,
-        response.user?.id ?? response.user_id,
-        response.user?.email ?? response.email,
-        response.user?.full_name ?? response.full_name ?? null
+        idToken,
+        firebaseUser.uid,
+        resolvedEmail,
+        resolvedFullName
       );
       setFullName("");
       setEmail("");
@@ -113,14 +116,12 @@ export function AuthPanel() {
     } catch (err) {
       const code = firebaseErrorCode(err);
       const message = err instanceof Error ? err.message : "";
-      if (code === "auth/operation-not-allowed") {
-        setError("Sign in is temporarily unavailable. Please try again.");
-      } else if (message.includes("auth/operation-not-allowed")) {
-        setError("Sign in is temporarily unavailable. Please try again.");
+      if (code) {
+        setError(authErrorMessage(code, mode));
       } else if (message.toLowerCase().includes("failed to fetch")) {
         setError("Unable to connect right now. Please try again.");
       } else {
-        setError(message || "Authentication failed.");
+        setError(message || authErrorMessage("", mode));
       }
     } finally {
       setBusy(false);

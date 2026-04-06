@@ -1,12 +1,9 @@
 import { API_BASE_URL } from "@/lib/constants";
 import type {
   AIProviderStatusResponse,
-  AuthResponse,
   ExportRequest,
-  ForgotPasswordResponse,
   KeywordResponse,
   ResumeTemplateOption,
-  ResetPasswordResponse,
   ResumeRecord,
   RewriteBulletResponse,
   RewriteSummaryResponse,
@@ -136,30 +133,6 @@ async function request<T>(path: string, init?: RequestInit, token?: string): Pro
 }
 
 export const api = {
-  register(fullName: string, email: string, password: string) {
-    return request<AuthResponse>("/auth/register", {
-      method: "POST",
-      body: JSON.stringify({ full_name: fullName, email, password })
-    });
-  },
-  login(email: string, password: string) {
-    return request<AuthResponse>("/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password })
-    });
-  },
-  forgotPassword(email: string) {
-    return request<ForgotPasswordResponse>("/auth/forgot-password", {
-      method: "POST",
-      body: JSON.stringify({ email })
-    });
-  },
-  resetPassword(token: string, newPassword: string, confirmPassword: string) {
-    return request<ResetPasswordResponse>("/auth/reset-password", {
-      method: "POST",
-      body: JSON.stringify({ token, new_password: newPassword, confirm_password: confirmPassword })
-    });
-  },
   createResume(payload: ResumeInput, token: string) {
     return request<ResumeRecord>("/resumes", { method: "POST", body: JSON.stringify(payload) }, token);
   },

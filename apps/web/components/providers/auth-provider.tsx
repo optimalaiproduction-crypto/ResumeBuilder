@@ -1,10 +1,11 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { onIdTokenChanged, signOut } from "firebase/auth";
 
 import { clearAuth, getAuthToken, readUser, saveAuth } from "@/lib/auth-store";
 import { canUseAnalyticsFromConsent, readCookieConsent } from "@/lib/cookie-consent";
-import { initFirebaseAnalytics } from "@/lib/firebase";
+import { firebaseAuth, initFirebaseAnalytics } from "@/lib/firebase";
 
 type AuthState = {
   isReady: boolean;
@@ -63,6 +64,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const unsubscribe = onIdTokenChanged(firebaseAuth, async (firebaseUser) => {
+      if (!firebaseUser) {
+        clearAuth();
+        setToken(null);
+        setUserId(null);
+        setEmail(null);
+        setFullName(null);
+        return;
+      }
+
+      try {
+        const nextToken = await firebaseUser.getIdToken();
+        const nextUserId = firebaseUser.uid;
+        const nextEmail = firebaseUser.email ?? "";
+        const nextFullName = firebaseUser.displayName ?? null;
+        saveAuth(nextToken, nextUserId, nextEmail, nextFullName);
+        setToken(nextToken);
+        setUserId(nextUserId);
+        setEmail(nextEmail);
+        setFullName(nextFullName);
+      } catch {
+        clearAuth();
+        setToken(null);
+        setUserId(null);
+        setEmail(null);
+        setFullName(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
     const handleInvalidAuth = () => {
       clearAuth();
       setToken(null);
@@ -90,6 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setFullName(nextFullName ?? null);
       },
       logout: () => {
+        signOut(firebaseAuth).catch(() => undefined);
         clearAuth();
         setToken(null);
         setUserId(null);

@@ -4,38 +4,73 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
 
-import { api } from "@/lib/api";
+import { firebaseAuth } from "@/lib/firebase";
 
 function ResetPasswordContent() {
   const searchParams = useSearchParams();
-  const tokenFromUrl = useMemo(() => searchParams.get("token") ?? "", [searchParams]);
-  const [resetToken, setResetToken] = useState("");
+  const codeFromUrl = useMemo(() => searchParams.get("oobCode") ?? "", [searchParams]);
+  const [resetCode, setResetCode] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [codeChecked, setCodeChecked] = useState(false);
+  const [codeValid, setCodeValid] = useState(false);
   const [busy, setBusy] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const hasToken = resetToken.length > 0;
+  const hasCode = resetCode.length > 0;
 
   useEffect(() => {
-    const incoming = tokenFromUrl.trim();
+    const incoming = codeFromUrl.trim();
     if (!incoming) {
       return;
     }
-    setResetToken((current) => current || incoming);
+    setResetCode((current) => current || incoming);
     if (typeof window !== "undefined" && window.location.search) {
       window.history.replaceState({}, "", "/reset-password");
     }
-  }, [tokenFromUrl]);
+  }, [codeFromUrl]);
+
+  useEffect(() => {
+    if (!hasCode) {
+      setCodeChecked(true);
+      setCodeValid(false);
+      return;
+    }
+
+    let cancelled = false;
+    setCodeChecked(false);
+    setError("");
+    verifyPasswordResetCode(firebaseAuth, resetCode)
+      .then(() => {
+        if (cancelled) {
+          return;
+        }
+        setCodeValid(true);
+        setCodeChecked(true);
+      })
+      .catch(() => {
+        if (cancelled) {
+          return;
+        }
+        setCodeValid(false);
+        setCodeChecked(true);
+        setError("This reset link is invalid or expired. Request a new password reset email.");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasCode, resetCode]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError("");
     setSuccess("");
-    if (!hasToken) {
+    if (!hasCode || !codeValid) {
       setError("This reset link is invalid or expired. Request a new reset email.");
       return;
     }
@@ -51,12 +86,19 @@ function ResetPasswordContent() {
 
     setBusy(true);
     try {
-      const response = await api.resetPassword(resetToken, password, confirmPassword);
-      setSuccess(response.message);
+      await confirmPasswordReset(firebaseAuth, resetCode, password);
+      setSuccess("Your password has been reset successfully.");
       setPassword("");
       setConfirmPassword("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to reset password.");
+      const message = err instanceof Error ? err.message : "";
+      if (message.includes("auth/expired-action-code") || message.includes("auth/invalid-action-code")) {
+        setError("This reset link is invalid or expired. Request a new password reset email.");
+      } else if (message.includes("auth/weak-password")) {
+        setError("Password is too weak. Use at least 8 characters.");
+      } else {
+        setError("Unable to reset password.");
+      }
     } finally {
       setBusy(false);
     }
@@ -74,9 +116,13 @@ function ResetPasswordContent() {
         </p>
 
         <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
-          {!hasToken ? (
+          {!hasCode || (codeChecked && !codeValid) ? (
             <p className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
               This reset link is invalid. Please request a new password reset email.
+            </p>
+          ) : !codeChecked ? (
+            <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+              Validating reset link...
             </p>
           ) : null}
 
@@ -135,7 +181,7 @@ function ResetPasswordContent() {
           {success ? <p className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{success}</p> : null}
           {error ? <p className="rounded-xl border border-rose-100 bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p> : null}
 
-          <button type="submit" className="btn-primary w-full" disabled={busy || !hasToken}>
+          <button type="submit" className="btn-primary w-full" disabled={busy || !hasCode || !codeChecked || !codeValid}>
             {busy ? "Updating..." : "Update Password"}
           </button>
         </form>

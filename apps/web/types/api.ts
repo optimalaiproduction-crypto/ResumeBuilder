@@ -7,31 +7,6 @@ export type ResumeRecord = ResumeInput & {
   updated_at: string;
 };
 
-export type UserProfile = {
-  id: string;
-  email: string;
-  full_name: string | null;
-  created_at: string | null;
-};
-
-export type AuthResponse = {
-  access_token: string;
-  token_type: string;
-  user_id: string;
-  email: string;
-  full_name: string | null;
-  user: UserProfile;
-};
-
-export type ForgotPasswordResponse = {
-  message: string;
-  dev_reset_token?: string | null;
-};
-
-export type ResetPasswordResponse = {
-  message: string;
-};
-
 export type KeywordResponse = {
   keywords: string[];
   provider?: string;

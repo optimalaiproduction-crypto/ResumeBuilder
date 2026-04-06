@@ -11,6 +11,7 @@ class User(Base, TimestampMixin):
   __tablename__ = "users"
 
   id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+  firebase_uid: Mapped[str | None] = mapped_column(String(128), unique=True, nullable=True, index=True)
   email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
   full_name: Mapped[str | None] = mapped_column(String(120), nullable=True)
   password_hash: Mapped[str] = mapped_column(String(255), nullable=False)

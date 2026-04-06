@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { sendPasswordResetEmail } from "firebase/auth";
 
-import { api } from "@/lib/api";
+import { firebaseAuth } from "@/lib/firebase";
 
 export default function ForgotPasswordPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [success, setSuccess] = useState("");
@@ -19,13 +18,22 @@ export default function ForgotPasswordPage() {
     setError("");
     setSuccess("");
     try {
-      const response = await api.forgotPassword(email.trim());
-      setSuccess(response.message);
-      if (response.dev_reset_token) {
-        router.push(`/reset-password?token=${encodeURIComponent(response.dev_reset_token)}`);
-      }
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      const actionCodeSettings = origin
+        ? {
+            url: `${origin}/reset-password`,
+            handleCodeInApp: false
+          }
+        : undefined;
+      await sendPasswordResetEmail(firebaseAuth, email.trim(), actionCodeSettings);
+      setSuccess("If an account exists for this email, a password reset link will be sent.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to request password reset.");
+      const message = err instanceof Error ? err.message : "";
+      if (message.includes("auth/invalid-email")) {
+        setError("Please enter a valid email address.");
+      } else {
+        setError("Unable to request password reset. Please try again.");
+      }
     } finally {
       setBusy(false);
     }
