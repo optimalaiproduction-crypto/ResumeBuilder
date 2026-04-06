@@ -1,0 +1,129 @@
+@page {
+  size: A4;
+  margin: 1in;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Helvetica", "Arial", sans-serif;
+  color: #111827;
+  font-size: 10.9pt;
+  line-height: 1.48;
+}
+
+.rf-page {
+  max-width: 100%;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+.rf-header {
+  margin-bottom: 14px;
+  border-bottom: 1px solid #d1d5db;
+  padding-bottom: 10px;
+}
+
+.rf-header-main {
+  display: block;
+}
+
+.rf-header h1 {
+  font-size: 24pt;
+  line-height: 1.08;
+  color: #111827;
+}
+
+.rf-headline {
+  margin-top: 3px;
+  font-size: 12pt;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.rf-contact-line {
+  margin-top: 6px;
+  font-size: 9.8pt;
+  color: #374151;
+  overflow-wrap: anywhere;
+}
+
+.rf-section {
+  margin-top: 12px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.rf-section-title {
+  margin: 0;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 3px;
+  font-size: 10.6pt;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #111827;
+}
+
+.rf-summary-text,
+.rf-skills-line {
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+
+.rf-entry {
+  margin-top: 8px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.rf-entry-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.rf-entry-heading {
+  font-weight: 700;
+  color: #111827;
+  overflow-wrap: anywhere;
+}
+
+.rf-entry-date {
+  font-size: 9.6pt;
+  white-space: nowrap;
+  color: #4b5563;
+}
+
+.rf-bullets {
+  margin: 4px 0 0;
+  padding-left: 17px;
+}
+
+.rf-bullets li {
+  margin: 2px 0;
+  overflow-wrap: anywhere;
+}
+
+.rf-meta-line,
+.rf-link-line {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+a {
+  color: #0f4c81;
+  text-decoration: none;
+}

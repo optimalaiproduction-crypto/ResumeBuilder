@@ -1,0 +1,40 @@
+﻿<svg xmlns='http://www.w3.org/2000/svg' width='880' height='1240' viewBox='0 0 880 1240'>
+  <rect width='880' height='1240' fill='#f8fbff'/>
+  <rect x='54' y='52' width='772' height='1136' rx='20' fill='white' stroke='#d7e2ee' stroke-width='3'/>
+  <rect x='92' y='96' width='360' height='22' rx='11' fill='#1d4ed8'/>
+  <rect x='92' y='132' width='220' height='12' rx='6' fill='#b9c7d8'/>
+  <rect x='92' y='178' width='160' height='10' rx='5' fill='#d7e2ee'/>
+  <rect x='264' y='178' width='160' height='10' rx='5' fill='#d7e2ee'/>
+  <rect x='436' y='178' width='160' height='10' rx='5' fill='#d7e2ee'/>
+  <rect x='92' y='216' width='696' height='1' fill='#e2e8f0'/>
+
+  <rect x='92' y='246' width='110' height='12' rx='6' fill='#6b7a90'/>
+  <rect x='92' y='270' width='680' height='10' rx='5' fill='#d7e2ee'/>
+  <rect x='92' y='288' width='640' height='10' rx='5' fill='#d7e2ee'/>
+  <rect x='92' y='306' width='620' height='10' rx='5' fill='#d7e2ee'/>
+
+  <rect x='92' y='348' width='90' height='12' rx='6' fill='#6b7a90'/>
+  <rect x='92' y='372' width='142' height='32' rx='16' fill='#eef5ff' stroke='#d7e2ee'/>
+  <rect x='244' y='372' width='122' height='32' rx='16' fill='#eef5ff' stroke='#d7e2ee'/>
+  <rect x='376' y='372' width='116' height='32' rx='16' fill='#eef5ff' stroke='#d7e2ee'/>
+
+  <rect x='92' y='438' width='172' height='12' rx='6' fill='#6b7a90'/>
+  <rect x='92' y='462' width='520' height='12' rx='6' fill='#314155'/>
+  <rect x='622' y='462' width='150' height='10' rx='5' fill='#9baabc'/>
+  <rect x='92' y='486' width='680' height='10' rx='5' fill='#d7e2ee'/>
+  <rect x='92' y='504' width='680' height='10' rx='5' fill='#d7e2ee'/>
+  <rect x='92' y='522' width='640' height='10' rx='5' fill='#d7e2ee'/>
+
+  <rect x='92' y='570' width='172' height='12' rx='6' fill='#6b7a90'/>
+  <rect x='92' y='594' width='520' height='12' rx='6' fill='#314155'/>
+  <rect x='622' y='594' width='150' height='10' rx='5' fill='#9baabc'/>
+  <rect x='92' y='618' width='680' height='10' rx='5' fill='#d7e2ee'/>
+  <rect x='92' y='636' width='660' height='10' rx='5' fill='#d7e2ee'/>
+  <rect x='92' y='654' width='620' height='10' rx='5' fill='#d7e2ee'/>
+
+  <rect x='92' y='706' width='126' height='12' rx='6' fill='#6b7a90'/>
+  <rect x='92' y='730' width='360' height='12' rx='6' fill='#314155'/>
+  <rect x='462' y='730' width='120' height='10' rx='5' fill='#9baabc'/>
+
+  <text x='92' y='1150' fill='#73839b' font-family='Arial, sans-serif' font-size='22'>Nina Patel — Data Analyst</text>
+</svg>

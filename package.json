@@ -1,0 +1,14 @@
+{
+  "name": "resumeforge-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "packages/shared"
+  ],
+  "scripts": {
+    "dev:web": "npm --workspace apps/web run dev",
+    "build:web": "npm --workspace apps/web run build",
+    "start:web": "npm --workspace apps/web run start -- -p 3000 -H 0.0.0.0",
+    "lint:web": "npm --workspace apps/web run lint"
+  }
+}

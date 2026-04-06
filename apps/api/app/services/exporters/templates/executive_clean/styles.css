@@ -1,0 +1,136 @@
+@page {
+  size: A4;
+  margin: 1in;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Georgia", "Times New Roman", serif;
+  color: #1f2937;
+  font-size: 11pt;
+  line-height: 1.52;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+.rf-header {
+  margin-bottom: 16px;
+  border-bottom: 2px solid #111827;
+  padding-bottom: 12px;
+}
+
+.rf-header-main {
+  display: block;
+}
+
+.rf-header h1 {
+  font-size: 30pt;
+  line-height: 1.03;
+  letter-spacing: 0.01em;
+  color: #111827;
+}
+
+.rf-headline {
+  margin-top: 4px;
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  font-size: 12pt;
+  font-weight: 600;
+  color: #374151;
+}
+
+.rf-contact-line {
+  margin-top: 7px;
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  font-size: 9.7pt;
+  color: #4b5563;
+  overflow-wrap: anywhere;
+}
+
+.rf-section {
+  margin-top: 12px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.rf-section-title {
+  margin: 0;
+  border-bottom: 1px solid #d1d5db;
+  padding-bottom: 4px;
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  font-size: 9.7pt;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #111827;
+}
+
+.rf-summary-text,
+.rf-skills-line {
+  margin-top: 7px;
+  overflow-wrap: anywhere;
+}
+
+.rf-entry {
+  margin-top: 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #f1f5f9;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.rf-entry:last-child {
+  border-bottom: 0;
+}
+
+.rf-entry-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.rf-entry-heading {
+  font-weight: 700;
+  color: #111827;
+  overflow-wrap: anywhere;
+}
+
+.rf-entry-date {
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  font-size: 9.2pt;
+  white-space: nowrap;
+  color: #6b7280;
+}
+
+.rf-bullets {
+  margin: 5px 0 0;
+  padding-left: 19px;
+}
+
+.rf-bullets li {
+  margin: 2px 0;
+  overflow-wrap: anywhere;
+}
+
+.rf-meta-line,
+.rf-link-line {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+a {
+  color: #0f4c81;
+  text-decoration: none;
+}

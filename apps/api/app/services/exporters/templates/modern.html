@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <style>
+      @page {
+        size: A4;
+        margin: 1in;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        color: #0f172a;
+        font-size: 10.8pt;
+        line-height: 1.5;
+      }
+      .sheet {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 22px 24px;
+      }
+      header {
+        border-bottom: 2px solid #0f172a;
+        padding-bottom: 10px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 28pt;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+      }
+      .headline {
+        margin: 6px 0 0;
+        font-size: 12pt;
+        font-weight: 600;
+        color: #334155;
+      }
+      .contact {
+        margin: 8px 0 0;
+        font-size: 10pt;
+        color: #475569;
+      }
+      section {
+        margin-top: 14px;
+      }
+      h2 {
+        margin: 0 0 6px;
+        font-size: 11pt;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #1e293b;
+      }
+      p {
+        margin: 0;
+      }
+      .entry + .entry {
+        margin-top: 9px;
+      }
+      .entry-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8px;
+      }
+      .entry-title {
+        font-weight: 700;
+      }
+      .entry-date {
+        color: #64748b;
+        font-size: 9.7pt;
+        white-space: nowrap;
+      }
+      .entry-meta {
+        margin-top: 2px;
+        color: #475569;
+      }
+      ul {
+        margin: 4px 0 0;
+        padding-left: 18px;
+      }
+      li {
+        margin: 2px 0;
+      }
+      .skills {
+        margin: 0;
+      }
+      a {
+        color: #0f4c81;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="sheet">
+      <header>
+        <h1>{{ resume.full_name }}</h1>
+        {% if resume.headline %}
+        <p class="headline">{{ resume.headline }}</p>
+        {% endif %}
+        {% if resume.contact_line %}
+        <p class="contact">{{ resume.contact_line }}</p>
+        {% endif %}
+      </header>
+
+      {% if resume.summary %}
+      <section>
+        <h2>Summary</h2>
+        <p>{{ resume.summary }}</p>
+      </section>
+      {% endif %}
+
+      {% if resume.work %}
+      <section>
+        <h2>Experience</h2>
+        {% for item in resume.work %}
+        <div class="entry">
+          <div class="entry-head">
+            <p class="entry-title">{{ [item.role, item.company] | reject("equalto", "") | join(" | ") }}</p>
+            {% if item.date_range %}
+            <p class="entry-date">{{ item.date_range }}</p>
+            {% endif %}
+          </div>
+          {% if item.bullets %}
+          <ul>
+            {% for bullet in item.bullets %}
+            <li>{{ bullet }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% if resume.projects %}
+      <section>
+        <h2>Projects</h2>
+        {% for item in resume.projects %}
+        <div class="entry">
+          {% if item.name %}
+          <p class="entry-title">{{ item.name }}</p>
+          {% endif %}
+          {% if item.technologies %}
+          <p class="entry-meta"><strong>Technologies:</strong> {{ item.technologies | join(", ") }}</p>
+          {% endif %}
+          {% if item.description %}
+          <p class="entry-meta">{{ item.description }}</p>
+          {% endif %}
+          {% if item.bullets %}
+          <ul>
+            {% for bullet in item.bullets %}
+            <li>{{ bullet }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          {% if item.link %}
+          <p class="entry-meta"><a href="{{ item.link }}">{{ item.link }}</a></p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% if resume.education %}
+      <section>
+        <h2>Education</h2>
+        {% for item in resume.education %}
+        <div class="entry">
+          <div class="entry-head">
+            <p class="entry-title">{{ [item.degree, item.institution] | reject("equalto", "") | join(" - ") }}</p>
+            {% if item.date_range %}
+            <p class="entry-date">{{ item.date_range }}</p>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% if resume.skills %}
+      <section>
+        <h2>Skills</h2>
+        <p class="skills">{{ resume.skills | join(", ") }}</p>
+      </section>
+      {% endif %}
+
+      {% if resume.certifications %}
+      <section>
+        <h2>Certifications</h2>
+        {% for item in resume.certifications %}
+        <div class="entry">
+          <p class="entry-title">
+            {{ [item.name, item.issuer] | reject("equalto", "") | join(" - ") }}
+            {% if item.date %} ({{ item.date }}){% endif %}
+          </p>
+          {% if item.link %}
+          <p class="entry-meta"><a href="{{ item.link }}">{{ item.link }}</a></p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </section>
+      {% endif %}
+    </main>
+  </body>
+</html>

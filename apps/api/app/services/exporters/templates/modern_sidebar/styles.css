@@ -1,0 +1,174 @@
+@page {
+  size: A4;
+  margin: 1in;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Helvetica Neue", "Arial", sans-serif;
+  color: #0f172a;
+  font-size: 10.6pt;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+.rf-header {
+  margin-bottom: 14px;
+  border-bottom: 1.5px solid #c7d8ea;
+  padding-bottom: 12px;
+}
+
+.rf-header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.rf-header-identity h1 {
+  font-size: 25pt;
+  line-height: 1.08;
+  color: #0f172a;
+}
+
+.rf-headline {
+  margin-top: 3px;
+  font-size: 12pt;
+  font-weight: 600;
+  color: #334155;
+}
+
+.rf-contact-line {
+  margin-top: 6px;
+  color: #475569;
+  font-size: 9.6pt;
+  overflow-wrap: anywhere;
+}
+
+.rf-photo-wrap {
+  width: 74px;
+  height: 74px;
+  border: 2px solid #bfdbfe;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.rf-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rf-columns::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.rf-main-col {
+  float: left;
+  width: 67%;
+  padding-right: 18px;
+}
+
+.rf-side-col {
+  float: right;
+  width: 33%;
+}
+
+.rf-section {
+  margin-top: 10px;
+  border: 1px solid #dbe7f4;
+  border-radius: 8px;
+  background: #fbfdff;
+  padding: 9px 10px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.rf-section-title {
+  margin: 0;
+  border-bottom: 1px solid #e4edf7;
+  padding-bottom: 3px;
+  font-size: 9.6pt;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #0b5380;
+}
+
+.rf-summary-text,
+.rf-skills-line {
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+
+.rf-entry {
+  margin-top: 7px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.rf-entry-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.rf-entry-heading {
+  font-weight: 700;
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.rf-entry-date {
+  font-size: 9.2pt;
+  white-space: nowrap;
+  color: #64748b;
+}
+
+.rf-bullets {
+  margin: 4px 0 0;
+  padding-left: 17px;
+}
+
+.rf-bullets li {
+  margin: 2px 0;
+  overflow-wrap: anywhere;
+}
+
+.rf-meta-line,
+.rf-link-line {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.rf-compact-list {
+  margin: 6px 0 0;
+  padding-left: 16px;
+}
+
+.rf-compact-list li {
+  margin: 2px 0;
+  overflow-wrap: anywhere;
+}
+
+a {
+  color: #0f5d91;
+  text-decoration: none;
+}
